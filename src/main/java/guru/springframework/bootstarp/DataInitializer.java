@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
@@ -104,14 +103,13 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         guacamole.setNotes(guacamoleNotes);
         guacamole.setDifficulty(Difficulty.EASY);
 
-        Set<Ingredient> guacamoleIngredients = guacamole.getIngredients();
-        guacamoleIngredients.add(new Ingredient("Avocado", BigDecimal.valueOf(0.5), piece, guacamole ));
-        guacamoleIngredients.add(new Ingredient("Fresh lime juice", BigDecimal.valueOf(1L), tablespoon, guacamole));
-        guacamoleIngredients.add(new Ingredient("Minced red onion", BigDecimal.valueOf(2L), tablespoon, guacamole));
-        guacamoleIngredients.add(new Ingredient("Serrano chilies", BigDecimal.valueOf(2L), piece, guacamole));
-        guacamoleIngredients.add(new Ingredient("Cilantro", BigDecimal.valueOf(2L), tablespoon, guacamole));
-        guacamoleIngredients.add(new Ingredient("Pepper", BigDecimal.valueOf(1L), dash, guacamole));
-        guacamoleIngredients.add(new Ingredient("Tomato", BigDecimal.valueOf(0.5), piece, guacamole));
+        guacamole.addIngredient(new Ingredient("Avocado", BigDecimal.valueOf(0.5), piece));
+        guacamole.addIngredient(new Ingredient("Fresh lime juice", BigDecimal.valueOf(1L), tablespoon));
+        guacamole.addIngredient(new Ingredient("Minced red onion", BigDecimal.valueOf(2L), tablespoon));
+        guacamole.addIngredient(new Ingredient("Serrano chilies", BigDecimal.valueOf(2L), piece));
+        guacamole.addIngredient(new Ingredient("Cilantro", BigDecimal.valueOf(2L), tablespoon));
+        guacamole.addIngredient(new Ingredient("Pepper", BigDecimal.valueOf(1L), dash));
+        guacamole.addIngredient(new Ingredient("Tomato", BigDecimal.valueOf(0.5), piece));
 
         guacamole.setServings(4);
         guacamole.setSource("Simplyrecipes");
@@ -167,25 +165,25 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         tacoNotes.setRecipe(tacos);
         tacos.setNotes(tacoNotes);
 
-        tacos.getIngredients().add(new Ingredient("Ancho chili powder", new BigDecimal(2L), tablespoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Dried oregano", new BigDecimal(1L), teaspoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Dried cumin", new BigDecimal(1L), teaspoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Sugar", new BigDecimal(1L), teaspoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Salt", new BigDecimal(0.5), teaspoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Clove of garlic, chopped", new BigDecimal(1L), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("finely grated orange zest", new BigDecimal(1L), tablespoon, tacos));
-        tacos.getIngredients().add(new Ingredient("fresh-squeezed orange juice", new BigDecimal(3L), tablespoon, tacos));
-        tacos.getIngredients().add(new Ingredient("Olive oil", new BigDecimal(2L), tablespoon, tacos));
-        tacos.getIngredients().add(new Ingredient("boneless chicken thighs", new BigDecimal(4L), tablespoon, tacos));
-        tacos.getIngredients().add(new Ingredient("small corn tortillas", new BigDecimal(8L), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("packed baby arugula", new BigDecimal(3L), cup, tacos));
-        tacos.getIngredients().add(new Ingredient("medium ripe avocados, sliced", new BigDecimal(2L), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("radishes, thinly sliced", new BigDecimal(4L), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("cherry tomatoes, halved", new BigDecimal(0.5), pint, tacos));
-        tacos.getIngredients().add(new Ingredient("red onion, thinly sliced", new BigDecimal(0.25), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("Roughly chopped cilantro", new BigDecimal(4L), piece, tacos));
-        tacos.getIngredients().add(new Ingredient("cup sour cream thinned with 1/4 cup milk", new BigDecimal(4L), cup, tacos));
-        tacos.getIngredients().add(new Ingredient("lime, cut into wedges", new BigDecimal(4L), piece, tacos));
+        tacos.addIngredient(new Ingredient("Ancho chili powder", new BigDecimal(2L), tablespoon));
+        tacos.addIngredient(new Ingredient("Dried oregano", new BigDecimal(1L), teaspoon));
+        tacos.addIngredient(new Ingredient("Dried cumin", new BigDecimal(1L), teaspoon));
+        tacos.addIngredient(new Ingredient("Sugar", new BigDecimal(1L), teaspoon));
+        tacos.addIngredient(new Ingredient("Salt", new BigDecimal(0.5), teaspoon));
+        tacos.addIngredient(new Ingredient("Clove of garlic, chopped", new BigDecimal(1L), piece));
+        tacos.addIngredient(new Ingredient("finely grated orange zest", new BigDecimal(1L), tablespoon));
+        tacos.addIngredient(new Ingredient("fresh-squeezed orange juice", new BigDecimal(3L), tablespoon));
+        tacos.addIngredient(new Ingredient("Olive oil", new BigDecimal(2L), tablespoon));
+        tacos.addIngredient(new Ingredient("boneless chicken thighs", new BigDecimal(4L), tablespoon));
+        tacos.addIngredient(new Ingredient("small corn tortillas", new BigDecimal(8L), piece));
+        tacos.addIngredient(new Ingredient("packed baby arugula", new BigDecimal(3L), cup));
+        tacos.addIngredient(new Ingredient("medium ripe avocados, sliced", new BigDecimal(2L), piece));
+        tacos.addIngredient(new Ingredient("radishes, thinly sliced", new BigDecimal(4L), piece));
+        tacos.addIngredient(new Ingredient("cherry tomatoes, halved", new BigDecimal(0.5), pint));
+        tacos.addIngredient(new Ingredient("red onion, thinly sliced", new BigDecimal(0.25), piece));
+        tacos.addIngredient(new Ingredient("Roughly chopped cilantro", new BigDecimal(4L), piece));
+        tacos.addIngredient(new Ingredient("cup sour cream thinned with 1/4 cup milk", new BigDecimal(4L), cup));
+        tacos.addIngredient(new Ingredient("lime, cut into wedges", new BigDecimal(4L), piece));
 
         tacos.getCategories().add(american);
         tacos.getCategories().add(mexican);

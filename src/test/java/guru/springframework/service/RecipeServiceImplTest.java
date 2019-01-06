@@ -1,5 +1,6 @@
 package guru.springframework.service;
 
+import guru.springframework.commands.RecipeCommand;
 import guru.springframework.converters.RecipeCommandToRecipe;
 import guru.springframework.converters.RecipeToRecipeCommand;
 import guru.springframework.domain.Recipe;
@@ -75,5 +76,43 @@ public class RecipeServiceImplTest {
 
         assertEquals(1, actual.size());
         verify(repository, times(1)).findAll();
+    }
+
+    @Test
+    public void saveRecipeCommand() {
+        Long recipeId = 1L;
+        Recipe recipe = Recipe.builder().id(recipeId).build();
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(recipeId);
+
+        when(recipeCommandToRecipe.convert(recipeCommand)).thenReturn(recipe);
+        when(recipeToRecipeCommand.convert(recipe)).thenReturn(recipeCommand);
+        when(repository.save(recipe)).thenReturn(recipe);
+
+        RecipeCommand recipeCommandReturned = service.saveRecipeCommand(recipeCommand);
+
+        assertNotNull("Null recipe command returned", recipeCommandReturned);
+        verify(repository, times(1)).save(recipe);
+        verify(recipeCommandToRecipe, times(1)).convert(recipeCommand);
+        verify(recipeToRecipeCommand, times(1)).convert(recipe);
+    }
+
+    @Test
+    public void getRecipeCommandById() {
+        Long recipeId = 1L;
+        Recipe recipe = Recipe.builder().id(recipeId).build();
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(repository.findById(recipeId)).thenReturn(recipeOptional);
+        RecipeCommand recipeCommand = new RecipeCommand();
+        recipeCommand.setId(recipeId);
+        when(recipeToRecipeCommand.convert(recipe)).thenReturn(recipeCommand);
+
+        RecipeCommand recipeCommandReturned = service.findCommandById(recipeId);
+
+        assertNotNull("Null recipe command returned", recipeCommandReturned);
+        verify(repository, times(1)).findById(recipeId);
+        verify(repository, never()).findAll();
+        verify(recipeToRecipeCommand, times(1)).convert(recipe);
     }
 }

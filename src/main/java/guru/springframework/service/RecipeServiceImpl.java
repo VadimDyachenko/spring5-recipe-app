@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+
 @Slf4j
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -32,6 +33,7 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<Recipe> getRecipes() {
         log.debug("Called getRecipes method");
         Set<Recipe> recipes = new HashSet<>();
@@ -41,9 +43,10 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Recipe findById(Long id) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(id);
-        if(!recipeOptional.isPresent()){
+        if (!recipeOptional.isPresent()) {
             throw new RuntimeException(String.format("Recipe with id={%s} not found.", id));
         }
         return recipeOptional.get();
@@ -54,7 +57,13 @@ public class RecipeServiceImpl implements RecipeService {
     public RecipeCommand saveRecipeCommand(RecipeCommand command) {
         Recipe detachedRecipe = recipeCommandToRecipe.convert(command);
         Recipe savedRecipe = recipeRepository.save(detachedRecipe);
-        log.debug("Saved recipe id:{}", savedRecipe.getId());
+        log.debug("Saved new recipe, id: {}", savedRecipe.getId());
         return recipeToRecipeCommand.convert(savedRecipe);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public RecipeCommand findCommandById(Long id) {
+        return recipeToRecipeCommand.convert(findById(id));
     }
 }

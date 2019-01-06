@@ -115,4 +115,13 @@ public class RecipeServiceImplTest {
         verify(repository, never()).findAll();
         verify(recipeToRecipeCommand, times(1)).convert(recipe);
     }
+
+    @Test
+    public void deleteById() {
+        Long recipeId = 1L;
+
+        service.deleteById(recipeId);
+
+        verify(repository, times(1)).deleteById(recipeId);
+    }
 }

@@ -15,7 +15,8 @@ import static org.junit.Assert.assertNull;
 
 public class IngredientToIngredientCommandTest {
 
-    private static final Recipe RECIPE = new Recipe();
+    private static final Long RECIPE_ID_VALUE = 2L;
+    private static final Recipe RECIPE = Recipe.builder().id(RECIPE_ID_VALUE).build();
     private static final BigDecimal AMOUNT = new BigDecimal(10);
     private static final String DESCRIPTION = "Test Description";
     private static final Long UOM_ID = 2L;
@@ -54,6 +55,7 @@ public class IngredientToIngredientCommandTest {
         assertNotNull(result);
         assertNull(result.getUom());
         assertEquals(ID_VALUE, result.getId());
+        assertEquals(RECIPE_ID_VALUE, result.getRecipeId());
         assertEquals(AMOUNT, result.getAmount());
         assertEquals(DESCRIPTION, result.getDescription());
     }
@@ -75,6 +77,7 @@ public class IngredientToIngredientCommandTest {
 
         assertNotNull(result);
         assertEquals(ID_VALUE, result.getId());
+        assertEquals(RECIPE_ID_VALUE, result.getRecipeId());
         assertNotNull(result.getUom());
         assertEquals(UOM_ID, result.getUom().getId());
         assertEquals(AMOUNT, result.getAmount());

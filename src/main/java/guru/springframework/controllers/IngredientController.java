@@ -1,6 +1,8 @@
 package guru.springframework.controllers;
 
 import guru.springframework.commands.IngredientCommand;
+import guru.springframework.commands.RecipeCommand;
+import guru.springframework.commands.UnitOfMeasureCommand;
 import guru.springframework.service.IngredientService;
 import guru.springframework.service.RecipeService;
 import guru.springframework.service.UnitOfMeasureService;
@@ -52,8 +54,7 @@ public class IngredientController {
 
     @GetMapping
     @RequestMapping("recipe/{recipeId}/ingredient/{id}/update")
-    public String updateRecipeIngredient(@PathVariable Long recipeId,
-                                         @PathVariable Long id, Model model){
+    public String updateRecipeIngredient(@PathVariable Long recipeId, @PathVariable Long id, Model model) {
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, id));
         model.addAttribute("uomList", unitOfMeasureService.listAllUom());
         return "recipe/ingredient/ingredientform";
@@ -69,5 +70,26 @@ public class IngredientController {
         log.debug("saved recipe id: {}, ingredient id: {}", recipeId, ingredientId);
 
         return "redirect:/recipe/" + recipeId + "/ingredient/" + ingredientId + "/show";
+    }
+
+    @GetMapping
+    @RequestMapping("recipe/{recipeId}/ingredient/new")
+    public String newIngredient(@PathVariable Long recipeId, Model model) {
+        RecipeCommand recipeCommand = recipeService.findCommandById(recipeId);
+
+        if (recipeCommand == null) {
+            log.error("Recipe with id: {} not found", recipeId);
+            return "redirect:/recipe";
+        }
+
+        IngredientCommand ingredientCommand = new IngredientCommand();
+        ingredientCommand.setRecipeId(recipeId);
+
+        model.addAttribute("ingredient", ingredientCommand);
+        ingredientCommand.setUom(new UnitOfMeasureCommand());
+
+        model.addAttribute("uomList", unitOfMeasureService.listAllUom());
+
+        return "recipe/ingredient/ingredientform";
     }
 }

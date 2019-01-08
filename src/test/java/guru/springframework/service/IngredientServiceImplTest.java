@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -25,6 +26,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class IngredientServiceImplTest {
+
+    private static final String NEW_DESCRIPTION = "New description";
+    private static final String OLD_DESCRIPTION = "Old description";
 
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
     private final IngredientCommandToIngredient ingredientCommandToIngredient;
@@ -85,7 +89,7 @@ public class IngredientServiceImplTest {
     }
 
     @Test
-    public void testSaveIngredientCommand() {
+    public void testSaveWithUpdateIngredient() {
         IngredientCommand command = new IngredientCommand();
         Long ingredientId = 3L;
         Long recipeId = 2L;
@@ -111,7 +115,7 @@ public class IngredientServiceImplTest {
     }
 
     @Test
-    public void testSaveNewIngredientCommand() {
+    public void testSaveWithAddIngredient() {
 
         Long ingredientId = 3L;
         Long recipeId = 2L;
@@ -123,22 +127,19 @@ public class IngredientServiceImplTest {
         IngredientCommand command = new IngredientCommand();
         command.setId(ingredientId);
         command.setRecipeId(recipeId);
+        command.setAmount(BigDecimal.valueOf(10));
         command.setUom(uomCommand);
-        command.setDescription("New description");
+        command.setDescription(NEW_DESCRIPTION);
 
-        Ingredient ingredient = new Ingredient();
-        ingredient.setId(ingredientId);
-        ingredient.setUom(uom);
-        ingredient.setDescription("Old description");
+        Ingredient ingredient = getIngredient(ingredientId, uom, BigDecimal.valueOf(10), OLD_DESCRIPTION);
 
         Recipe recipe = new Recipe();
         recipe.addIngredient(ingredient);
 
+
+        Ingredient savedIngredient = getIngredient(ingredientId, uom, BigDecimal.valueOf(10), NEW_DESCRIPTION);
+
         Recipe savedRecipe = new Recipe();
-        Ingredient savedIngredient = new Ingredient();
-        savedIngredient.setId(ingredientId);
-        savedIngredient.setUom(uom);
-        savedIngredient.setDescription("New description");
         savedRecipe.addIngredient(savedIngredient);
 
         Optional<Recipe> recipeOptional = Optional.of(recipe);
@@ -150,8 +151,61 @@ public class IngredientServiceImplTest {
         IngredientCommand savedCommand = service.saveIngredientCommand(command);
 
         assertEquals(ingredientId, savedCommand.getId());
-        assertEquals("New description", savedCommand.getDescription());
+        assertEquals(NEW_DESCRIPTION, savedCommand.getDescription());
         verify(recipeRepository, times(1)).findById(recipeId);
         verify(recipeRepository, times(1)).save(recipe);
+    }
+
+    @Test
+    public void testSaveWithAddIngredientWhenIdNotFoundButOtherFieldsIsSame() {
+
+        Long ingredientId = 3L;
+        Long recipeId = 2L;
+        Long uomId = 5L;
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setId(uomId);
+        UnitOfMeasureCommand uomCommand = unitOfMeasureToUnitOfMeasureCommand.convert(uom);
+
+        IngredientCommand command = new IngredientCommand();
+        command.setId(ingredientId);
+        command.setRecipeId(recipeId);
+        command.setAmount(BigDecimal.valueOf(10));
+        command.setUom(uomCommand);
+        command.setDescription(NEW_DESCRIPTION);
+
+        Ingredient ingredient = getIngredient(ingredientId, uom, BigDecimal.valueOf(10), OLD_DESCRIPTION);
+
+        Recipe recipe = new Recipe();
+        recipe.addIngredient(ingredient);
+
+
+        Long newIngredientId = 1L;
+        Ingredient savedIngredient = getIngredient(newIngredientId, uom, BigDecimal.valueOf(10), NEW_DESCRIPTION);
+
+        Recipe savedRecipe = new Recipe();
+        savedRecipe.addIngredient(savedIngredient);
+
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(recipeId)).thenReturn(recipeOptional);
+        when(recipeRepository.save(recipe)).thenReturn(savedRecipe);
+        when(uomRepository.findById(uomId)).thenReturn(Optional.of(uom));
+
+        IngredientCommand savedCommand = service.saveIngredientCommand(command);
+
+        assertEquals(newIngredientId, savedCommand.getId());
+        assertEquals(NEW_DESCRIPTION, savedCommand.getDescription());
+        verify(recipeRepository, times(1)).findById(recipeId);
+        verify(recipeRepository, times(1)).save(recipe);
+    }
+
+    private Ingredient getIngredient(Long id, UnitOfMeasure uom, BigDecimal amount, String description) {
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId(id);
+        ingredient.setUom(uom);
+        ingredient.setAmount(amount);
+        ingredient.setDescription(description);
+
+        return ingredient;
     }
 }

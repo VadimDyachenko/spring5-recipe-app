@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.HashSet;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,19 +61,25 @@ public class IngredientControllerTest {
     @Test
     public void testShowIngredient() throws Exception {
         IngredientCommand ingredientCommand = new IngredientCommand();
+        Long recipeId = 1L;
+        Long ingredientId = 3L;
 
-        when(ingredientService.findByRecipeIdAndIngredientId(1L, 3L)).thenReturn(ingredientCommand);
+        when(ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId)).thenReturn(ingredientCommand);
 
         mockMvc.perform(get("/recipe/1/ingredient/3/show"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("recipe/ingredient/show"))
                 .andExpect(model().attributeExists("ingredient"));
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(recipeId, ingredientId);
     }
 
     @Test
     public void testUpdateIngredientForm() throws Exception {
         IngredientCommand ingredientCommand = new IngredientCommand();
-        when(ingredientService.findByRecipeIdAndIngredientId(1L, 2L)).thenReturn(ingredientCommand);
+        Long recipeId = 1L;
+        Long ingredientId = 2L;
+
+        when(ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId)).thenReturn(ingredientCommand);
         when(unitOfMeasureService.listAllUom()).thenReturn(new HashSet<>());
 
         mockMvc.perform(get("/recipe/1/ingredient/2/update"))
@@ -80,6 +87,9 @@ public class IngredientControllerTest {
                 .andExpect(view().name("recipe/ingredient/ingredientform"))
                 .andExpect(model().attributeExists("ingredient"))
                 .andExpect(model().attributeExists("uomList"));
+
+        verify(ingredientService, times(1)).findByRecipeIdAndIngredientId(recipeId, ingredientId);
+        verify(unitOfMeasureService, times(1)).listAllUom();
     }
 
     @Test
@@ -98,5 +108,6 @@ public class IngredientControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/recipe/2/ingredient/3/show"));
 
+        verify(ingredientService, times(1)).saveIngredientCommand(any(IngredientCommand.class));
     }
 }

@@ -73,7 +73,7 @@ public class IngredientServiceImpl implements IngredientService {
     }
 
     @Override
-    public void deleteByRecipeIdAndIngredientId(Long recipeId, Long ingredientId) {
+    public void deleteById(Long recipeId, Long ingredientId) {
         Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
 
         if (!recipeOptional.isPresent()) {
@@ -85,7 +85,9 @@ public class IngredientServiceImpl implements IngredientService {
                     .findFirst();
 
             if(ingredientOptional.isPresent()) {
-                recipe.getIngredients().remove(ingredientOptional.get());
+                Ingredient ingredient = ingredientOptional.get();
+                recipe.getIngredients().remove(ingredient);
+                ingredient.setRecipe(null);
                 recipeRepository.save(recipe);
                 log.debug("Ingredient id: {}, for recipe id: {} successfully deleted", ingredientId, recipeId);
             } else {

@@ -19,12 +19,13 @@ import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -218,24 +219,32 @@ public class IngredientServiceImplTest {
         Long recipeId = 1L;
         Long secondIngredientId = 2L;
 
+        Recipe recipe = new Recipe();
+        recipe.setId(recipeId);
+
         Ingredient firstIngredient = new Ingredient();
         firstIngredient.setId(1L);
+        firstIngredient.setRecipe(recipe);
+
         Ingredient secondIngredient = new Ingredient();
         secondIngredient.setId(secondIngredientId);
+        secondIngredient.setRecipe(recipe);
 
         Set<Ingredient> ingredients = new HashSet<>(Arrays.asList(firstIngredient, secondIngredient));
 
-        Recipe recipe = Recipe.builder().id(recipeId).ingredients(ingredients).build();
+        recipe.setIngredients(ingredients);
+
         Optional<Recipe> recipeOptional = Optional.of(recipe);
 
         when(recipeRepository.findById(recipeId)).thenReturn(recipeOptional);
 
-        Set<Ingredient> modifiedIngredients = new HashSet<>(Collections.singletonList(firstIngredient));
-        Recipe modifiedRecipe = Recipe.builder().id(recipeId).ingredients(modifiedIngredients).build();
+        service.deleteById(recipeId, secondIngredientId);
 
-        service.deleteByRecipeIdAndIngredientId(recipeId, secondIngredientId);
+        assertEquals(1, recipe.getIngredients().size());
+        assertTrue(recipe.getIngredients().contains(firstIngredient));
+        assertNull(secondIngredient.getRecipe());
 
         verify(recipeRepository, times(1)).findById(recipeId);
-        verify(recipeRepository, times(1)).save(modifiedRecipe);
+        verify(recipeRepository, times(1)).save(recipe);
     }
 }

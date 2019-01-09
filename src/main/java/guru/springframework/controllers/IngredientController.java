@@ -92,4 +92,12 @@ public class IngredientController {
 
         return "recipe/ingredient/ingredientform";
     }
+
+    @GetMapping
+    @RequestMapping("/recipe/{recipeId}/ingredient/{ingredientId}/delete")
+    public String deleteIngredient(@PathVariable Long recipeId, @PathVariable Long ingredientId) {
+        log.debug("Deleting ingredient id: {} for recipe id: {}", ingredientId, recipeId);
+        ingredientService.deleteByRecipeIdAndIngredientId(recipeId, ingredientId);
+        return "redirect:/recipe/" + recipeId +"/ingredients";
+    }
 }

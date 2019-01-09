@@ -18,7 +18,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
@@ -207,5 +211,31 @@ public class IngredientServiceImplTest {
         ingredient.setDescription(description);
 
         return ingredient;
+    }
+
+    @Test
+    public void testDeleteByRecipeIdAndIngredientId() {
+        Long recipeId = 1L;
+        Long secondIngredientId = 2L;
+
+        Ingredient firstIngredient = new Ingredient();
+        firstIngredient.setId(1L);
+        Ingredient secondIngredient = new Ingredient();
+        secondIngredient.setId(secondIngredientId);
+
+        Set<Ingredient> ingredients = new HashSet<>(Arrays.asList(firstIngredient, secondIngredient));
+
+        Recipe recipe = Recipe.builder().id(recipeId).ingredients(ingredients).build();
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(recipeId)).thenReturn(recipeOptional);
+
+        Set<Ingredient> modifiedIngredients = new HashSet<>(Collections.singletonList(firstIngredient));
+        Recipe modifiedRecipe = Recipe.builder().id(recipeId).ingredients(modifiedIngredients).build();
+
+        service.deleteByRecipeIdAndIngredientId(recipeId, secondIngredientId);
+
+        verify(recipeRepository, times(1)).findById(recipeId);
+        verify(recipeRepository, times(1)).save(modifiedRecipe);
     }
 }

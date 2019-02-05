@@ -1,6 +1,7 @@
 # Spring Boot Recipe Application
 
 [![CircleCI](https://circleci.com/gh/VadimDyachenko/spring5-recipe-app/tree/master.svg?style=svg)](https://circleci.com/gh/VadimDyachenko/spring5-recipe-app/tree/master)
+[![codecov](https://codecov.io/gh/VadimDyachenko/sfg-pet-clinic/branch/master/graph/badge.svg)](https://codecov.io/gh/VadimDyachenko/sfg-pet-clinic)
 
 This repository is for an example application built in my Spring Framework 5 - Beginner to Guru
 
